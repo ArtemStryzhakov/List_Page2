@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -13,81 +9,92 @@ namespace Elemendide_App
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class EuroopaRiigid : ContentPage
     {
-        public ObservableCollection<Euroopa> europe { get; set; }
+        public ObservableCollection<Euroopa> Countries { get; set; }
         Label lbl_list;
         ListView List;
-        Button lisa, kustuta;
+        Button add, delete;
         public EuroopaRiigid()
         {
-            europe = new ObservableCollection<Euroopa>
-            { 
-                new Euroopa {nameOfCountry="Estonia", nameOfCapital="Tallin", People="1.3M", Image="https://vp2006-2016.president.ee/images/stories/president_staatilised/lipp.jpg"},
-                new Euroopa {nameOfCountry="Latvia", nameOfCapital="Riga", People="1.902M", Image="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Flag_of_Latvia.svg/800px-Flag_of_Latvia.svg.png"},
-                new Euroopa {nameOfCountry="Lithuania", nameOfCapital="Vilnius", People="2.795M", Image="https://upload.wikimedia.org/wikipedia/commons/1/11/Flag_of_Lithuania.svg"},
-                new Euroopa {nameOfCountry="German", nameOfCapital="Berlin", People="83.24M", Image="https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg"}
-            };
 
+            Countries = new ObservableCollection<Euroopa>
+            {
+                new Euroopa {nameOfCountry="Estonia", nameOfCapital="Tallinn", People="1 328 439", Image="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Flag_of_Estonia.svg/255px-Flag_of_Estonia.svg.png"},
+                new Euroopa {nameOfCountry="Russia", nameOfCapital="Moscow", People="147 000 000", Image="https://www.advantour.com/russia/images/symbolics/russia-flag.jpg"},
+                new Euroopa {nameOfCountry="German", nameOfCapital="Berlin", People="83 700 000", Image="https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/1200px-Flag_of_Germany.svg.png"},
+                new Euroopa {nameOfCountry="France", nameOfCapital="Paris", People="76 000 000", Image="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Flag_of_France_%28lighter_variant%29.svg/250px-Flag_of_France_%28lighter_variant%29.svg.png"}
+            };
             lbl_list = new Label
             {
-                Text = "Telefonide loetelu",
+                Text = "List of countries",
                 HorizontalOptions = LayoutOptions.Center,
                 FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label))
             };
             List = new ListView
             {
-                SeparatorColor = Color.Orange,
-                Header = "Minu oma kolektion",
+                SeparatorColor = Color.AliceBlue,
+                Header = "Country",
 
                 HasUnevenRows = true,
-                ItemsSource = europe,
+                ItemsSource = Countries,
                 ItemTemplate = new DataTemplate(() =>
                 {
-                    ImageCell imageCell = new ImageCell { TextColor = Color.Red, DetailColor = Color.Green };
+                    ImageCell imageCell = new ImageCell { TextColor = Color.White, DetailColor = Color.White };
                     imageCell.SetBinding(ImageCell.TextProperty, "nameOfCountry");
-                    Binding companyBinding = new Binding { Path = "nameOfCapital", StringFormat = "Tore telefon filmalt {0}" };
+                    Binding companyBinding = new Binding { Path = "nameOfCapital", StringFormat = " {0}" };
                     imageCell.SetBinding(ImageCell.DetailProperty, companyBinding);
-                    Binding a = new Binding { Path = "People", StringFormat = "People: {0}" };
+                    Binding a = new Binding { Path = "People", StringFormat = "About the population: {0}" };
                     imageCell.SetBinding(ImageCell.DetailProperty, a);
                     imageCell.SetBinding(ImageCell.ImageSourceProperty, "Image");
                     return imageCell;
 
                 })
             };
-            lisa = new Button { Text = "Lisa Telefon" };
-            kustuta = new Button { Text = "Kustuta telefon" };
+            add = new Button { Text = "Add country" };
+            delete = new Button { Text = "Delete country" };
             List.ItemTapped += List_ItemTapped;
-            kustuta.Clicked += Kustuta_Clicked;
-            lisa.Clicked += Lisa_Clicked;
-            this.Content = new StackLayout { Children = { lbl_list, List, lisa, kustuta } };
+            delete.Clicked += Delete_Clicked;
+            add.Clicked += Add_Clicked;
+            this.Content = new StackLayout { Children = { lbl_list, List, add, delete } };
         }
 
-        private async void Lisa_Clicked(object sender, EventArgs e)
+        private async void Add_Clicked(object sender, EventArgs e)
         {
-
-            string NameOfCountry = await DisplayPromptAsync("What name of this country?", " ", keyboard: Keyboard.Text);
-            string NameOfCapital = await DisplayPromptAsync("What name of capital?", "Write it down:", keyboard: Keyboard.Text);
-            string population = await DisplayPromptAsync("What population?", "Write it down:", keyboard: Keyboard.Numeric);
-            string image = await DisplayPromptAsync("Write a link of the image?", "Write it down:", keyboard: Keyboard.Text);
-
-            europe.Add(item: new Euroopa { nameOfCountry = NameOfCountry, nameOfCapital = NameOfCapital, People = population, Image = image });
-
-        }
-
-        private void Kustuta_Clicked(object sender, EventArgs e)
-        {
-            Euroopa eur = List.SelectedItem as Euroopa;
-            if (eur != null)
+            // Write Country
+            string Country = await DisplayPromptAsync("Which country do you want to add??", "Write it down:", keyboard: Keyboard.Text);
+            // Write Capital
+            string Capital = await DisplayPromptAsync("What is its capital?", "Write it down:", keyboard: Keyboard.Text);
+            // Write Population of country
+            string Population = await DisplayPromptAsync("How many people live there?", "Write it down:", keyboard: Keyboard.Telephone);
+            // Write link of flag
+            string image = await DisplayPromptAsync("Enter a photo of the flag", "Write it down:", keyboard: Keyboard.Text);
+            
+            if (Country == "" || Capital == "" || Population == "" || image == "") return;
+            Euroopa newest = new Euroopa { nameOfCountry = Country, nameOfCapital = Capital, People = Population, Image = image };
+            foreach (Euroopa thing in Countries)
             {
-                europe.Remove(eur);
+                if (thing.nameOfCountry == newest.nameOfCountry)
+                    return;
+            }
+            Countries.Add(item: newest);
+        }
+
+        private void Delete_Clicked(object sender, EventArgs e)
+        {
+            Euroopa country = List.SelectedItem as Euroopa;
+            if (country != null)
+            {
+                Countries.Remove(country);
                 List.SelectedItem = null;
             }
         }
 
         private async void List_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            Euroopa selectedPhone = e.Item as Euroopa;
-            if (selectedPhone != null)
-                await DisplayAlert("Выбранная модель", $"{selectedPhone.nameOfCountry}-{selectedPhone.nameOfCapital}", "OK");
+            Euroopa selectedCountry = e.Item as Euroopa;
+            if (selectedCountry != null)
+            {
+                await DisplayAlert("Country", $"{selectedCountry.nameOfCapital}-{selectedCountry.nameOfCapital}", "OK");
+            }               
         }
     }
 }

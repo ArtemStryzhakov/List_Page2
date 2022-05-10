@@ -95,6 +95,12 @@ namespace Elemendide_App
                 BackgroundColor = Color.LightBlue,
             };
 
+            Button Europe = new Button()
+            {
+                Text = "Europe",
+                BackgroundColor = Color.LightBlue,
+            };
+
             RGB_Btn.Clicked += RGB_Btn_Clicked;
             Valgusfoor_btn.Clicked += Valgusfoor_btn_Clicked;
             TTT.Clicked += TTT_Clicked;
@@ -108,15 +114,21 @@ namespace Elemendide_App
             Date_btn.Clicked += Date_btn_Clicked;
             SS_btn.Clicked += SS_btn_Clicked;
             ListPage.Clicked += ListPage_Clicked;
+            Europe.Clicked += Europe_Clicked;
 
             StackLayout st = new StackLayout()
             {
-                Children = { Ent_btn , Timer_btn , cliker , Date_btn , SS_btn , frame_btn , image_btn, Valgusfoor_btn, RGB_Btn, TTT, PP, TB, EX, EX_2, ListPage }
+                Children = { Ent_btn , Timer_btn , cliker , Date_btn , SS_btn , frame_btn , image_btn, Valgusfoor_btn, RGB_Btn, TTT, PP, TB, EX, EX_2, ListPage, Europe }
             };
 
             ScrollView scrollView = new ScrollView { Content = st };
             st.BackgroundColor = Color.AntiqueWhite;
             Content = scrollView;          
+        }
+
+        private async void Europe_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new EuroopaRiigid());
         }
 
         private async void ListPage_Clicked(object sender, EventArgs e)
